@@ -12,7 +12,7 @@ public interface EmployeeCTCRepository extends JpaRepository<EmployeeCTCAccessBe
 
 	boolean existsByEmployeeId(Long employeeId);
 
-	EmployeeCTCAccessBean findByEmployeeId(Long employeeId);
+	EmployeeCTCAccessBean findByEmployeeId(String employeeId);
 
 	EmployeeCTCAccessBean findEmployeeCTCByEmployeeCTCId(Long employeeCTCId);
 

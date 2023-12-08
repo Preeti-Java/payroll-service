@@ -1,7 +1,10 @@
 package com.neel.hrms.payroll.utils;
 
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class HeaderUtills {
 	
@@ -9,7 +12,7 @@ public class HeaderUtills {
 
 	public String[] getHeader(String headerName) {
 		if(headerName.equals("BiometricCsvHeader"))
-			keys.getBiometricCsvHeader();
+			return keys.getBiometricCsvHeader();
 		return null;
 	}
 

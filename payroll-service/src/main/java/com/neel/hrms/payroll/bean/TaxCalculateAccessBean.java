@@ -3,7 +3,6 @@ package com.neel.hrms.payroll.bean;
 
 
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +29,6 @@ public class TaxCalculateAccessBean {
 	private String ageGroup;
 
 	@Column(name = "interestIncome")
-	@Min(value = 0)
 	private double interestIncome;
 
 	@Column(name = "occupiedPropertyInterest")
