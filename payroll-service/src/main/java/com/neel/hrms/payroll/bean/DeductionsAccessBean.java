@@ -44,7 +44,7 @@ public class DeductionsAccessBean {
 	private DeductionTransAccessBean deductionTransAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "dedEffectiveDate")
 	private Date dedEffectiveDate;

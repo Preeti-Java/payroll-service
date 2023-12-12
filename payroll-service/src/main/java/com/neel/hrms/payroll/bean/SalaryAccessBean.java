@@ -31,7 +31,7 @@ public class SalaryAccessBean {
 	private Long salaryId;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 	
 	@Column(name = "HRA")
 	private Long hra;

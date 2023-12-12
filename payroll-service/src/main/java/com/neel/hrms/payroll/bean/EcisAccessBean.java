@@ -43,7 +43,7 @@ public class EcisAccessBean {
 	private EcisTransAccessBean ecisTransAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "ECISEffectiveDate")
 	private Date ecisEffectiveDate;

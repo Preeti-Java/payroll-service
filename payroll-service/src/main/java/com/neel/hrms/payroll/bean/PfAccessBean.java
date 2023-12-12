@@ -45,7 +45,7 @@ public class PfAccessBean {
 	private PfTransAccessBean pfTransAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "pfEffectiveDate")
 	private Date pfEffectiveDate;

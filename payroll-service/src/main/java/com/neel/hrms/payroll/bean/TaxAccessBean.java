@@ -37,7 +37,7 @@ public class TaxAccessBean {
 	private TaxTransAccessBean taxTransAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "TaxEffectiveDate")
 	private Date taxEffectiveDate;

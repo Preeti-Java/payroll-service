@@ -34,7 +34,7 @@ public class EmployeeCTCAccessBean {
 	private Long employeeCTCId;
 
 	@Column(name = "EmployeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "Name")
 	private String name;

@@ -1,6 +1,6 @@
 package com.neel.hrms.payroll.bean;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,22 +32,22 @@ public class PayrollAccessBean {
 	private Long payrollId;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "startDay")
-	private Date startDay;
+	private LocalDate startDay;
 
 	@Column(name = "hoursWorked")
 	private Long hoursWorked;
 
 	@Column(name = "grossPay")
-	private Long grossPay;
+	private float grossPay;
 
 	@Column(name = "deduction")
-	private Long deduction;
+	private float deduction;
 
 	@Column(name = "netPay")
-	private Long netPay;
+	private float netPay;
 
 	@Column(name = "accountId")
 	private Long accountId;
@@ -56,7 +56,7 @@ public class PayrollAccessBean {
 	private Long totalDay;
 
 	@Column(name = "endDay")
-	private Long endDay;
+	private LocalDate endDay;
 
 	@Column(name = "col2")
 	private String col2;

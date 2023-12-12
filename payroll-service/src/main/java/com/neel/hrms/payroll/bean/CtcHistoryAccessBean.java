@@ -34,7 +34,7 @@ public class CtcHistoryAccessBean {
 	private Long ctcHistoryId;
 
 	@Column(name = "EmployeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "Name")
 	private String name;

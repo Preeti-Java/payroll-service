@@ -43,7 +43,7 @@ public class LoanAccessBean {
 	private LoanTransactionAccessBean loanTransactionAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "LoanEffectiveDate")
 	private Date loanEffectiveDate;

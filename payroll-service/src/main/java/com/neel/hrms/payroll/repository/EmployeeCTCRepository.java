@@ -10,15 +10,8 @@ import com.neel.hrms.payroll.bean.EmployeeCTCAccessBean;
 @Repository
 public interface EmployeeCTCRepository extends JpaRepository<EmployeeCTCAccessBean, Long> {
 
-	boolean existsByEmployeeId(Long employeeId);
 
-	EmployeeCTCAccessBean findByEmployeeId(String employeeId);
+	EmployeeCTCAccessBean findByEmployeeId(String data);
 
-	EmployeeCTCAccessBean findEmployeeCTCByEmployeeCTCId(Long employeeCTCId);
-
-	long deleteByEmployeeId(Long employeeId);
-
-	long deleteByEmployeeCTCId(Long employeeCTCId);
-	
 
 }

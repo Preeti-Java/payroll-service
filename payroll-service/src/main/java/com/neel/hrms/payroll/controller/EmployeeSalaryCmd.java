@@ -1,8 +1,6 @@
 package com.neel.hrms.payroll.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.neel.hrms.payroll.bean.PayrollAccessBean;
-import com.neel.hrms.payroll.service.AutoSalaryCalculatorService;
+import com.neel.hrms.payroll.service.SalaryCalculatorService;
 import com.neel.hrms.payroll.utils.CsvUtills;
 import com.neel.hrms.payroll.utils.DownloadUtills;
 
@@ -26,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmployeeSalaryCmd {
 	
-	private final AutoSalaryCalculatorService autoSalaryCalculatorService;
+	private final SalaryCalculatorService salaryCalculatorService;
 	
 	private final CsvUtills csvUtills;
 	
@@ -46,14 +43,13 @@ public class EmployeeSalaryCmd {
 		
 		//Check CSV value correct or not
 		csvUtills.checkSalaryCsv(csv,request);
-		
-		List<PayrollAccessBean> payrollList = new ArrayList<>();
-		
 		if(flag) {
-			payrollList = autoSalaryCalculatorService.calculateSalary(csv);
+			salaryCalculatorService.calculateAutoSalary(csv);
 		}
+		else
+			salaryCalculatorService.calculateSalary(csv);
 		
-		return null;
+		return ResponseEntity.ok().body("Success");
 		
 	}
 

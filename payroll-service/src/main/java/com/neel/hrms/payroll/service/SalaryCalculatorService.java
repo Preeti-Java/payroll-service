@@ -6,8 +6,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.neel.hrms.payroll.bean.PayrollAccessBean;
 
-public interface AutoSalaryCalculatorService {
+public interface SalaryCalculatorService {
 
 	List<PayrollAccessBean> calculateSalary(MultipartFile csv);
+
+	List<PayrollAccessBean> calculateAutoSalary(MultipartFile csv);
 
 }

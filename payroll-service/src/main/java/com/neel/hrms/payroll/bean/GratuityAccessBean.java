@@ -43,7 +43,7 @@ public class GratuityAccessBean {
 	private GratuityTransAccessBean gratuityTransAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 	
 	@Column(name = "GratuityEffectiveDate")
 	private Date gratuityEffectiveDate;

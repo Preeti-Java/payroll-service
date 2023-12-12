@@ -40,7 +40,7 @@ public class AllowancesAccessBean {
 	private AllowanceTransAccessBean allowanceTransAccessBean;
 
 	@Column(name = "employeeId")
-	private Long employeeId;
+	private String employeeId;
 
 	@Column(name = "effectiveDate")
 	private Date effectiveDate;
