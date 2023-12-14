@@ -2,6 +2,7 @@ package com.neel.hrms.payroll.service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,7 @@ import com.neel.hrms.payroll.repository.EmployeeCTCRepository;
 import com.neel.hrms.payroll.repository.PayrollRepository;
 import com.neel.hrms.payroll.utils.LeaveAndHolidayAndSundayCalculator;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -95,9 +97,7 @@ public class SalaryCalculatorServiceImpl implements SalaryCalculatorService{
 	}
 
 	@Override
-	public List<PayrollAccessBean> calculateAutoSalary(MultipartFile csv) {
-		
-		List<PayrollAccessBean> payrollList =  new ArrayList<>();
+	public String calculateAutoSalary(MultipartFile csv,HttpServletRequest request) {
 		
 		//Get One by One data from CSV 
 		InputStreamReader isr = null;
@@ -109,44 +109,94 @@ public class SalaryCalculatorServiceImpl implements SalaryCalculatorService{
 		BufferedReader csvReader = new BufferedReader(isr);
 		String line = "";
 		int count = 0;
+		String flag = "Failed"; //Used for create error file
+		//Error Object
+		StringBuilder errors = new StringBuilder("");
+		// For Session management
+		boolean invalidLine = false;
+		
 		try {
 			while (( line = csvReader.readLine()) != null) {
 				if(count >= 1) {
 					String[] data = line.split(",");
-					//Get employeeCtc data from database
-					EmployeeCTCAccessBean employeeCTCAccessBean = employeeCTCRepository.findByEmployeeId(data[1]);
-						if(employeeCTCAccessBean != null){
-						Long ctc = employeeCTCAccessBean.getCTC() == null ? 0L :employeeCTCAccessBean.getCTC();
-						
-						float totalDeduction = calculateDeduction(employeeCTCAccessBean,data);
-						float netPay = ctc - totalDeduction;
-						
-						//convert into payroll
-						PayrollAccessBean payrollAccessBean = new PayrollAccessBean();
-						payrollAccessBean.setAccountId(null);
-						payrollAccessBean.setEmployeeId(data[1]);
-						payrollAccessBean.setStartDay(LocalDate.parse(data[2], formatter));
-						payrollAccessBean.setEndDay(LocalDate.parse(data[3], formatter));
-						payrollAccessBean.setTotalDay(Long.parseLong(data[4]));
-						payrollAccessBean.setHoursWorked(Long.parseLong(data[5]));
-						payrollAccessBean.setGrossPay(ctc);
-						payrollAccessBean.setDeduction(totalDeduction);
-						payrollAccessBean.setNetPay(netPay);
-						
-						payrollRepository.save(payrollAccessBean);
-						payrollList.add(payrollAccessBean);
-						
+					//Check duplicate data if true
+					boolean processFlag = payrollExistOrNot(data);
+					if(!processFlag) {
+						//Save and calculate for db
+						flag = saveAndCalculateEmployeesPayroll(data,errors);
 					}
+					else {
+						errors.append("Entry already uploaded in DB : " + data[1]);
+						invalidLine = true;
+					}	
 				}
 				count++;
 			}
-			return payrollList;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return Collections.emptyList();
+		// creating error files
+		if (!flag.equals("Success")) 
+		{
+			createFailedFileCSV(errors, request, count + 1);
+		}
+
+		return flag;
 	
 	}
+
+	private void createFailedFileCSV(StringBuilder errors, HttpServletRequest request, int i) {
+		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+		arrayOutputStream.write(errors.toString().getBytes());
+		request.getSession(invalidLine).setAttribute("csvErrFile", arrayOutputStream);
+	}
+
+	private String saveAndCalculateEmployeesPayroll(String[] data, StringBuilder errors) {
+		String flag = "Failed";
+		//Get employeeCtc data from database
+		EmployeeCTCAccessBean employeeCTCAccessBean = employeeCTCRepository.findByEmployeeId(data[1]);
+			if(employeeCTCAccessBean != null){
+			Long ctc = employeeCTCAccessBean.getCTC() == null ? 0L :employeeCTCAccessBean.getCTC();
+			
+			float totalDeduction = calculateDeduction(employeeCTCAccessBean,data);
+			float netPay = ctc - totalDeduction;
+			
+			try {
+				//convert into payroll
+				saveInDB(data,ctc,totalDeduction,netPay);
+				flag = "Success";
+			}
+			catch(Exception e) {
+			  errors.append("Something issue when saved in DB " + data[1]);
+			}
+		}
+		else {
+			errors.append("Employee Code is not present in DB " + data[1]);
+		}
+			return flag;
+	}
+
+	private PayrollAccessBean saveInDB(String[] data, Long ctc, float totalDeduction, float netPay) {
+		PayrollAccessBean payrollAccessBean = new PayrollAccessBean();
+		payrollAccessBean.setAccountId(null);
+		payrollAccessBean.setEmployeeId(data[1]);
+		payrollAccessBean.setStartDay(LocalDate.parse(data[2], formatter));
+		payrollAccessBean.setEndDay(LocalDate.parse(data[3], formatter));
+		payrollAccessBean.setTotalDay(Long.parseLong(data[4]));
+		payrollAccessBean.setHoursWorked(Long.parseLong(data[5]));
+		payrollAccessBean.setGrossPay(ctc);
+		payrollAccessBean.setDeduction(totalDeduction);
+		payrollAccessBean.setNetPay(netPay);
+		
+		payrollRepository.save(payrollAccessBean);
+		
+		return payrollAccessBean;
+	}
+
+	private boolean payrollExistOrNot(String[] data) {
+		return payrollRepository.existsByEmployeeIdAndStartDayAndEndDay(data[1],LocalDate.parse(data[2], formatter), LocalDate.parse(data[3], formatter));
+	}
+
 
 	private long calculateLeaves(String startDate, String endDate, String totalPresentDay, long holidaysAndSundays) {
 		return LeaveAndHolidayAndSundayCalculator.calculateLeaves(LocalDate.parse(startDate, formatter), LocalDate.parse(endDate, formatter), Long.parseLong(totalPresentDay),holidaysAndSundays);

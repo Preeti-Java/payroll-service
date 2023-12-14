@@ -43,13 +43,14 @@ public class EmployeeSalaryCmd {
 		
 		//Check CSV value correct or not
 		csvUtills.checkSalaryCsv(csv,request);
+		String status = "Failed";
 		if(flag) {
-			salaryCalculatorService.calculateAutoSalary(csv);
+			status = salaryCalculatorService.calculateAutoSalary(csv,request);
 		}
 		else
 			salaryCalculatorService.calculateSalary(csv);
 		
-		return ResponseEntity.ok().body("Success");
+		return ResponseEntity.ok().body(status);
 		
 	}
 
